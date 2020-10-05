@@ -1,0 +1,77 @@
+input {
+  file {
+    type => "task"
+    path => "/opt/logstash/ELK/Input_Files/Diageo/TASK_New/csv/*.csv"
+    start_position => "beginning"
+    sincedb_path => "/opt/logstash/ELK/Input_Files/Diageo/sincedb_diageo_task_final1.txt"
+  }
+  file {
+    type => "incident"
+    path => "/opt/logstash/ELK/Input_Files/Diageo/Incident/csv/*.csv"
+    start_position => "beginning"
+    sincedb_path => "/opt/logstash/ELK/Input_Files/Diageo/sincedb_diageo_incident_final17.txt"
+  }
+}
+filter {
+  if [type] == "task"
+  {
+  csv {
+    separator => ","
+    skip_header => true
+    columns => ["Number","Assigned to","Assignment group","Task type","Priority","Created","Closed","Contact type","State","Parent","Email","TCS Tower","Closed by","Closed by Email","TCS EMPID","TCS Designation","TCS / Partner","Active / Relesed"]
+  }
+ }
+  if [type] == "incident"
+  {
+  csv {
+    separator => ","
+    skip_header => true
+    columns => ["Number","Assigned to","Assignment group","Task type","Priority","Created","Resolved","Closed","Resolved by","Contact type","State","Parent","Email","TCS Tower","TCS EMPID","TCS Designation","TCS / Partner","Active / Relesed"]
+  }
+ }
+  mutate {
+    rename => { "Number" => "Incident ID" }
+        rename => { "Task type" => "Incident Type" }
+    rename => { "State" => "Status" }
+        rename => { "Resolved by" => "Closed by" }
+    rename => { "Contact type" => "Contact" }
+ }
+  date {
+    match => ["Created","yyyy-MM-dd HH:mm:ss"]
+    timezone => "Asia/Kolkata"
+    target => "Created"
+
+ }
+  date {
+    match => ["Closed","yyyy-MM-dd HH:mm:ss"]
+    timezone => "Asia/Kolkata"
+    target => "Closed"
+ }
+  date {
+    match => ["Resolved","yyyy-MM-dd HH:mm:ss"]
+    timezone => "Asia/Kolkata"
+    target => "Resolved"
+ }
+if [TCS EMPID] =~ "([A-Z,a-z]+)" {
+   mutate {
+     replace => [ "TCS EMPID", "0" ]
+ }
+}
+ mutate {
+   convert => { "TCS EMPID" => "integer" }
+}
+
+}
+output {
+  stdout { codec => rubydebug }
+  elasticsearch {
+  hosts => ["http://elasticsearchnew.eastus.cloudapp.azure.com:9201"]
+  index => "common_data_diageo"
+  #cacert => "/opt/logstash/ELK/etc/logstash/certs/ca.crt"
+  #user => "elastic"
+  #password => "Elastic@12345"
+  #ssl_certificate_verification => "false"
+ }
+}
+
+
