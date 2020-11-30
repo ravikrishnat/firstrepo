@@ -1,0 +1,76 @@
+Installing the Control Node :
+ sudo yum install ansible
+
+https://access.redhat.com/articles/3174981?extIdCarryOver=true&sc_cid=701f2000001OH7YAAW
+
+cd /home/ansible/ANSIBLE
+wget "https://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.9.1-1.el7.ans.noarch.rpm"
+
+rpm2cpio /home/ansible/ANSIBLE/ansible-2.9.1-1.el7.ans.noarch.rpm | cpio -div 
+
+-- returned 216931 blocks
+
+--How To Setup SSH Passwordless Login on CentOS 7 / RHEL 7
+https://www.itzgeek.com/how-tos/linux/centos-how-tos/ssh-passwordless-login-centos-7-rhel-7.html
+do following in source server (122)
+ssh-keygen
+ssh-copy-id -i /home/ansible/.ssh/id_rsa.pub pepsico@10.51.184.28    (28 is destination)
+
+-- ansible Configuration
+https://www.itzgeek.com/how-tos/linux/ubuntu-how-tos/install-ansible-automation-tool-for-it-management-on-centos-7-ubuntu-14-04-fedora-22-part-1.html
+
+vi /etc/ansible/hosts
+# add below lines
+ [ansiblebeat]
+ 10.51.187.142
+
+ [ansiblepep]
+ 10.51.184.28
+
+
+ansible all -u pepsico -m ping
+sudo ansible ansiblebeat -u filebeat -m ping
+sudo ansible ansiblepep -u pepsico -m ping
+
+10.51.184.28 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+
+
+sudo ansible -m command -a "hostname" -u pepsico ansiblepep
+ sudo ansible -m command -a "hostname" -u filebeat ansiblebeat
+10.51.184.28 | CHANGED | rc=0 >>
+01HW748940
+
+sudo ansible -m command -a "df -h" -u pepsico ansiblepoc
+
+
+--------------------------------------------------Installtion done-----------------------
+------check for configurations-----------------
+https://developers.redhat.com/blog/2016/09/02/how-to-install-and-configure-ansible-on-rhel/
+
+wget https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/openstack.yml  --- sample playbook
+
+
+---
+ #play1
+ - hosts: ansiblepoc
+   connection: local
+   remote_user: ansible
+   become: true
+   tasks:
+      - copy: src=/home/weblogic/test.txt  dest=/home/ansible
+
+
+
+--------------------------------
+https://www.woolha.com/tutorials/ansible-playbook-for-setting-up-elastic-stack
+
+
+----------Ansible tower------------
+wget "https://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-latest.tar.gz"
+tar -xvf ansible-tower-setup-latest.tar.gz

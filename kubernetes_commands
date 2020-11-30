@@ -1,0 +1,159 @@
+http 504/502/500 errors
+
+check_resource.py script mentioned earlier. If some pods have very high CPU or RAM usage (more than 85%)
+
+Gateway pod
+
+kubectl patch deploy/itom-xruntime-gateway -n itsma1 -p '{"spec": {"template": {"spec": {"containers": [{"name": "gateway","resources": {"limits": {"memory": "4096M"}}}]}}}}'
+
+For version before 2019.02.001, reduce the tomcat connection timeout for gateway from 180s to 20s,
+
+kubectl patch deploy/itom-xruntime-gateway -n itsma1 -p '{"spec":{"template":{"spec":{"containers":[{"name":"gateway","env":[{"name":"TOMCAT_CONNECTOR_TIMEOUT","valueFrom":null,"value":"20000"}]}]}}}}'
+
+Platform 
+Increase the resource limit of platform pod: 4GB -> 8GB:
+
+
+kubectl patch deploy/itom-xruntime-platform -n itsma1 -p '{"spec":{"template":{"spec":{"containers":[{"name":"itom-xruntime-platform","resources": {"limits": {"memory": "8192M"}}}]}}}}'
+
+kubectl patch deploy/itom-xruntime-platform-offline -n itsma1 -p '{"spec":{"template":{"spec":{"containers":[{"name":"itom-xruntime-platform","resources": {"limits": {"memory": "8192M"}}}]}}}}'
+
+Rebalancing pods
+Run the check_resource.py script. If it finds that some workers are extremely busy while other workers are
+
+kubectl patch deploy/itom-xruntime-platform -nitsma1 -p '{"spec":{"template":{"spec":{"containers":[{"name":"itom-xruntime-platform","env":[{"name":"RESTART_","value":"'$(date +%s)'"}]}]}}}}'
+
+kubectl patch deploy/itom-xruntime-gateway -nitsma1 -p '{"spec":{"template":{"spec":{"containers":[{"name":"gateway","env":[{"name":"RESTART_","value":"'$(date +%s)'"}]}]}}}}'
+
+kubectl delete pod <pod-name> -n<ns>  #repeat until balanced
+
+The pod log can be reviewed for possible causes, and if no issues other than a failed probe, then the probe timeout could be increased in the deployment configuration.
+
+CDF management page on the :5443 port.
+
+
+
+kubectl edit deploy/<deploy_name> -n<ns> -o yaml --save-config
+
+https://docs.microfocus.com/itom/SMAX:2019.05/AWSOSTuningScript
+
+to check disk space
+
+kubectl describe node pscel0192s1.swinfra.net
+kubectl describe node <FQDN of worker node>
+
+kubectl apply -f container-gateway-config.yml -f container-gateway-mysql.yml -f container-gateway.yml
+https://docs.microfocus.com/itom/SMAX:2018.08/Install_19895362/On-premise
+
+check pod status from server
+ kubectl describe pod <podName> --namespace=<namespace>
+ 
+CDF Container Deployment Foundation 
+SNAT  source network address translation
+
+upgrades steps for SMAX 2018.08 environment to 2019.05
+Step 1 (run command upgrade-g) takes about 1 minute.
+Step 2 (run command upgrade-l) takes about 18 minutes. 
+Step 3 (run command upgrade-u) takes about 18 minutes.
+
+1. run the command: kubectl get pv itom-vol -o json, and check spec.nfs.server part.
+
+2. check upgrade_temp/CDF_upgrade_parameters.txt, when you run upgrade.sh -g, the CDF parameters should be stored in this file, check whether the parameter: NFS_SERVER and it's value.
+
+I got it run (kubectl get pv itom-vol -o json)    NFS server ip in that json seems right. 
+
+I checked  "upgrade_temp" folder but there is no file such CDF_upgrade_parameters.txt. There is only one file named UPGRADE_START_TIME there. 
+
+To continue to upgrade I gave up from worker.I removed the worker role from nfs server and then I started the  upgrade procedure.   Now, I have only one master server.  
+All pods are on the master.  Memory usage was high. I set suite runlevel to DOWN.   
+I applied the upgrade processes when suite runlevel was down.  
+But I did not touch to core pods.  They were running.  When checking kube-status  in bin folder, everything was running. 
+
+To check parameters used in CDF 
+cd <ITOM_Suite_Foundation_Upgrade_2018.11.xxxx>
+
+./upgrade.sh -g
+
+Cookie:LWSSO_COOKIE_KEY=<Token>;TENANTID=<TENANTID>
+
+ kubectl get pods -v 7 
+ output like all rest calls
+
+reason for timeout in kubernetes
+https://tech.xing.com/a-reason-for-unexplained-connection-timeouts-on-kubernetes-docker-abd041cf7e02
+
+https://itservicedesk.jawwy.sa/idm-service/idm/v0/login?tenant=202674584_db&token=5BiRi9nE%2F4lXhjkapGTWvHoHNekIkNhtW4hyGNlpUSged%2B50J2Dv6Yhb5LuqLu0o5Rj93Ryg2IpYKofYFsSh6MMIOB1btSFHkVBrZY4AlBLfJqMbWS7RYmoNa83OsJQ2S2RK8bjgmGk0Vf4vp9EDvDnQybyZzY44acqE1MaXzO3NHjDmXInqNY8NhfoBIaPSxuaLIVP5EJtzB0dBsnQ403jkXq%2BopshkDBnMxG7hBtNy4oLz8zCwCBcqnfwd%2Bdy8mAAgKhDIlh4%2Fy1AozHQVXP6JsmQwgoaPxkR%2BKjolYpsalphVXrWWOevIwaFQU4cqE7TpKI5%2BrdOk8RJ4L3gP6FAogvRManXyzO8otZRRB3YxOD70mq94Yg3zAzcyBw00mSKnJlw%2BpmqJiuQUFlSNJwYk0epfm%2F1uBRsbamy9KyoKmgk3hDJ7FAJTc5mS0a1tHTNLjdMDVnaBuIgLZ1pzLceWfSWoCM9qYkY%2FV6Igv2HMz6J72yYCuDcbA%2FalAAUmaDYIBSLvHsh7liGkI7OqzX57wHMDLx2o4M%2BJgP4M4l2Yi2aSmW3m9kcBzVV2WOyhJwDC2CZ4%2FYfKR6AUkOBmPPB5tDn5ubxYinOET9bv%2B747pJ%2B%2F2nHHtYQO%2B04Y7AKPxYp9pbzfflBorj1I2s2jNaXqg8%2BMDcWQXZSJd6EkmJc4SFyDwdet2vzE5IX3uD0X3M91FxJmhDTh2NvGybYxz4Ad301qzkhTHbnW3ALUOQphzCiRHb1VsBzIlc88MGA%2Bqzlm95oManWUxbRpvUj4XXN0a%2Ff%2B2Ji%2B8JCTdHOHfGPfkEmNHLowQVa%2FfFvzFQ1hxdUxe8nXRat752Wvsjs6KTtWuar7JTFIwzNZH5O%2BNopCcJSYPvaTP1pvobQJcdTTGBbJPHnkrZmT26tyLvTBiFLwwICfikms8jH902PaApl5TyUhxximbtBm0684FS4s%2BvGZ40BmxKCBxDeWsqdu5uzSVSpGrILED5n68MDnMCfvJhscwGVSRlIGbPw9laN48uxnX6o3LO1ECbCxSBEgcCGM0XDdZVkdy0KP5Kga2XmLNqSFSEAwB85EQyF5V54KIvRlEHlhebW0wyS0XdB5r9GWEWJ6du3PGEOA9%2F9Zn3QKa7LimqAUcq%2F3LDkZLyG37t271bUzsCErNPRmNfdzYkrLfCtqm5x8emVDwWAV2LkKDWf9ciBQqeAPSt7xlb4SeikAId6WoEYqGjaVzX1lf4tbnGLqybTSALWJ5g%3D%3D&tryLocal=true
+
+
+link to play around kubernetes(code editor)
+https://www.katacoda.com/courses/kubernetes/playground
+https://labs.play-with-k8s.com/#
+
+config-demo - cluster information
+
+kubectl drain - to remove pods from node
+kubectl drain <nodename> --force
+kubectl get nodes - to get list of nodes
+kubectl will come with conjure-up 
+cluster settings will be in .kube directory in that config file will be there
+kubectl config unset users.<name> - to delete user
+kubectl config --kubeconfig=config-demo view - to open config-demo file
+kubectl config --kubeconfig=config-demo use-context dev-frontend : for the development cluster
+kubectl config --kubeconfig=config-demo view --minify : config info associated with the current context
+kubectl config --kubeconfig=config-demo use-context exp-scratch : to change context to exp-scratch cluster
+kubectl config --kubeconfig=config-demo use-context dev-storage : storage environment of the development cluster
+kubectl config view : in your config-exercise directory
+kubectl cluster-info : to check configurations of cluster done correctly
+kubectl create -f example.yaml : to run pods in kubernetes cluster
+kubectl get pods : list all pods
+kubectl get services : list all services
+kubectl get services,endpoints
+kubectl get ingress : NAME               HOSTS                           ADDRESS   PORTS   AGE
+kubectl proxy : check kubernetes dashboard
+juju expose kubernetes-worker : allow internet access to kubernetes worker charm
+juju unexpose kubernetes-worker : not allow net access
+juju config kubernetes-worker ingress=true : to manually deploy ingress
+pods : same DNS, dif IP
+for custome DNS 
+juju config kubernetes-master dns-provider=none : disable charm-managed DNS
+juju config kubernetes-worker kubelet-extra-config="{clusterDNS: ['10.152.183.123']}"
+juju run-action kubernetes-worker/0 microbot replicas=3 --wait : deploy 3 replicas of microbot web application
+juju run-action kubernetes-worker/0 microbot delete=true : to cleanup microbot web application
+--horizontal-pod-autoscaler-sync-period : horizontal auto scaling of pods default 15 sec
+juju add-unit kubernetes-master -n 3 : additional unit for numeric value
+juju get-constraints kubernetes-worker
+juju add-unit kubernetes-worker -n 2 --constraints "mem=6G cores=2" : add constraints
+juju set-constraints kubernetes-worker cores=2 mem=6G root-disk=16G
+kubectl get pod -o wide : to verify workloads
+juju enable-ha : create and maintain hign availability
+
+https://www.techrepublic.com/article/how-to-install-a-kubernetes-cluster-on-centos-7/
+
+https://myopswork.com/how-to-install-kubernetes-k8-in-rhel-or-centos-in-just-7-steps-2b78331174a5 : architecture of kubernetes
+
+https://myopswork.com/how-to-install-kubernetes-k8-in-rhel-or-centos-in-just-7-steps-2b78331174a5 : installation
+
+https://www.techrepublic.com/article/how-to-install-a-kubernetes-cluster-on-centos-7/ : kubernetes installation step by step
+
+https://www.techrepublic.com/article/how-to-deploy-your-first-pod-on-a-centos-kubernetes-cluster/ : deploy nginx pod in kubernetes
+
+https://www.linuxtechi.com/install-kubernetes-1-7-centos7-rhel7/ : installation kubernetes in RHEL 7
+
+
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 10.51.184.28:6443 --token gareku.mkijd2zmyqbwp22a \
+    --discovery-token-ca-cert-hash sha256:647b12d084f10551b615dcfe94e3664208f1315759b8b882021f3e76e348d8d0 
+
+

@@ -1,0 +1,637 @@
+Kafka : kafka_2.11-2.1.1 
+Zookeeper : apache-zookeeper-3.5.5-bin
+logs : /var/opt/autosys/logs/
+agents : /var/opt/autosys/test
+
+FIT SERVER : 
+ 30.25.159.202
+ phap1526
+ a9242298
+ Dont2020#
+
+DEV :
+ phap1509
+ a9265715
+ Nvhs*3108
+ 
+LOGSTASH SERVER :
+ 30.25.178.66
+ Rose@1472
+
+ 
+
+ bin/zkServer.sh start conf/zoo.cfg
+ 
+nohup /var/opt/autosys/test/kafka_2.11-2.1.1/bin/kafka-server-start.sh /var/opt/autosys/test/kafka_2.11-2.1.1/config/server.properties &
+
+nohup /var/opt/autosys/test/kafka_2.11-2.1.1/bin/connect-standalone.sh /var/opt/autosys/test/kafka_2.11-2.1.1/config/connect-file-standalone.properties /var/opt/autosys/test/kafka_2.11-2.1.1/config/connect-file-invoice-test-OFH1-source.properties /var/opt/autosys/test/kafka_2.11-2.1.1/config/connect-file-invoice-test-OFH2-source.properties /var/opt/autosys/test/kafka_2.11-2.1.1/config/connect-file-invoice-test-SS03-source.properties /var/opt/autosys/test/kafka_2.11-2.1.1/config/connect-file-invoice-test-OFH4-source.properties /var/opt/autosys/test/kafka_2.11-2.1.1/config/connect-file-invoice-test-OFH5-source.properties &
+
+/var/opt/autosys/test/kafka_2.11-2.1.1/bin/kafka-topics.sh --list --zookeeper 30.25.159.202:2181
+
+/var/opt/autosys/test/kafka_2.11-2.1.1/bin/kafka-topics.sh --create --zookeeper 30.25.159.202:2181 --replication-factor 1 --partitions 1 --topic sample_test
+
+/var/opt/autosys/test/kafka_2.11-2.1.1/bin/kafka-console-producer.sh --broker-list 30.25.159.202:9092 --topic sample_test < /var/opt/autosys/test/sample_log.out
+
+/var/opt/autosys/test/kafka_2.11-2.1.1/bin/kafka-console-consumer.sh --bootstrap-server 30.25.159.202:9092 --topic connect-pbna-topic --from-beginning
+
+/var/opt/autosys/test/kafka_2.11-2.1.1/bin/kafka-topics.sh --zookeeper localhost:2181 --describe --topic pbna-topic
+
+/var/opt/autosys/test/kafka_2.11-2.1.1/bin/kafka-topics.sh --zookeeper 30.25.159.202:2181 --delete --topic pbna-topic
+
+tail -n0 -F /var/opt/autosys/test/sample_log1.out | /var/opt/autosys/test/kafka_2.11-2.1.1/bin/kafka-console-producer.sh --broker-list 30.25.159.202:9092 --topic sample_test1
+
+bin/kafka-topics.sh --alter --zookeeper zk_host:port --topic my_topic_name --partitions 10
+
+bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list 30.25.159.202:9092 --topic connect-pbna-topic --time -1 --offsets 1 | awk -F  ":" '{sum += $3} END {print sum}'
+
+bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list 30.25.159.202:9092 --topic connect-pbna-topic --bootstrap-server 30.25.159.202:9092 --describe
+
+/opt/logstash/ELK/usr/share/logstash/bin/logstash --config.test_and_exit -f /opt/logstash/ELK/etc/logstash/conf.d/pbna_asn_trsmsn_rec.conf
+
+
+kill $(lsof -t -i :PORT_NUMBER)
+
+
+ 
+ ######################################COLLECTD#################################
+ 
+ 
+ac_config_files="$ac_config_files Makefile src/Makefile src/collectd.conf src/libcollectdclient/Makefile src/libcolle
+ctdclient/libcollectdclient.pc src/liboconfig/Makefile bindings/Makefile bindings/java/Makefile"
+
+https://docs.bmc.com/docs/btco113/collecting-and-processing-data-from-hp-ux-systems-775472031.html
+
+https://gokan.me/2018/02/18/collectd-elasticsearch-openstack/
+
+https://gist.github.com/itzg/918146d9b281c4a3bc0b1b91536f4a33
+
+https://github.com/collectd/collectd/
+
+https://gokan.me/2018/02/18/collectd-elasticsearch-openstack/
+
+Hostname    "host.example.com"
+LoadPlugin interface
+LoadPlugin load
+LoadPlugin memory
+LoadPlugin network
+<Plugin interface>
+    Interface "eth0"
+    IgnoreSelected false
+</Plugin>
+<Plugin network>
+    <Server "10.0.0.1" "25826">
+    </Server>
+</Plugin>
+
+https://docs.bmc.com/docs/btco113/collecting-and-processing-data-from-hp-ux-systems-775472031.html
+
+https://collectd.org/download.shtml
+
+https://www.elastic.co/guide/en/logstash/current/plugins-codecs-collectd.html
+
+
+
+[Unit]
+Description=statistics collection daemon
+Documentation=man:collectd(1)
+After=local-fs.target network.target
+Requires=local-fs.target network.target
+
+[Service]
+ExecStart=/usr/sbin/collectd -C /etc/collectd/collectd.conf -f
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
+
+
+/COLLECTD/collectd-5.5.0/contrib/redhat/init.d-collectd
+
+
+10.196.212.67
+elastic
+tcstcs123
+
+
+
+/tmp/test/COLLECTD/collectd-5.10.0
+
+
+autoconf
+- automake
+- flex
+- bison
+- libtool
+- pkg-config
+
+./configure CC=c99 CFLAGS=-g LIBS=-lposix
+
+./configure CC="gcc -arch i386 -arch x86_64 -arch ppc -arch ppc64" CXX="g++ -arch i386 -arch x86_64 -arch ppc -arch ppc64" CPP="gcc -E" CXXCPP="g++ -E"
+
+
+   On HP-UX, the default C compiler is not ANSI C compatible.  If GNU
+CC is not installed, it is recommended to use the following options in
+order to use an ANSI C compiler:
+
+     ./configure CC="cc -Ae -D_XOPEN_SOURCE=500"
+
+and if that doesn't work, install pre-built binaries of GCC for HP-UX.
+
+   On OSF/1 a.k.a. Tru64, some versions of the default C compiler cannot
+parse its `<wchar.h>' header file.  The option `-nodtk' can be used as
+a workaround.  If GNU CC is not installed, it is therefore recommended
+to try
+
+     ./configure CC="cc"
+
+and if that doesn't work, try
+
+     ./configure CC="cc -nodtk"
+
+
+
+https://github.com/krux/collectd
+********************************************************************************************
+ps -u a9242298 -f
+
+kafka: /opt/java8/bin/java -Xmx1G -Xms1G -server -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:+Expli
+file: /opt/java8/bin/java -Xms256M -Xmx2G -server -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:+Exp
+
+
+
+Cancelled
+
+SELECT COUNT(Cancelled) as success_users
+FROM kibana_sample_data_flights WHERE Cancelled=true
+SELECT COUNT(Cancelled) as failed
+FROM kibana_sample_data_flights WHERE Cancelled=true AND SELECT COUNT(Cancelled) as success
+FROM kibana_sample_data_flights WHERE Cancelled=false
+
+SELECT failure.kibana_sample_data_flights, success.kibana_sample_data_flights FROM (SELECT COUNT(Cancelled)FROM kibana_sample_data_flights WHERE Cancelled=true ) as failure, (SELECT COUNT(Cancelled)FROM kibana_sample_data_flights WHERE Cancelled=false) as success
+
+
+SELECT Cancelled,COUNT(Cancelled) as failure FROM kibana_sample_data_flights GROUP BY Cancelled
+
+dropdownControl valueColumn="OriginCityName" filterColumn="OriginCityName"
+
+filters
+| kibana_sample_data_flights
+| markdown {getCell "OriginCityName"} 
+  font={font family="'Open Sans', Helvetica, Arial, sans-serif" size=48 align="center" color="#444444" weight="normal" underline=false italic=false}
+| render
+
+filters
+| essql
+query="SELECT "system.load.1" AS LOAD FROM "metricbeat*" WHERE metricset.module = 'system' AND metricset.name = 'load' AND beat.hostname LIKE 'XXXXXX%' AND "@timestamp" <= NOW () LIMIT 1"
+| metric LOAD 
+  metricFont={font size=48 family="'Open Sans', Helvetica, Arial, sans-serif" color={if {lt 10} then="red" else="green"} align="center" lHeight=48} 
+  labelFont={font size=14 family="'Open Sans', Helvetica, Arial, sans-serif" color="#000000" align="center"}
+| render
+
+filters
+| essql query="SELECT last(GridPowerConsumption) as gpc FROM solar"
+| math "abs(gpc/30000)"
+| progress shape="wheel" label={formatnumber "0%"} valueColor={filters
+| essql query="SELECT last(GridPowerConsumption) as gps FROM solar"
+| math "gps" if {gte 0.0} then="red" else="green"}
+......
+color={ switch {case if={lte 0.5} then="green"} case if={all {gt 0.5} {lte 0.75}} then="orange"} default="red" }} valueColor={ switch {case if={lte 0.5} then="green"} case if={all {gt 0.5} {lte 0.75}} then="orange"} default="red"
+orders asn invoice eci
+
+SELECT count(*) as countsuc from "pbna-asn-*" where  status LIKE 'success%'
+
+filters
+| essql 
+  query="SELECT count(*) as countsuc from \"pbna-asn-*\" where  status LIKE 'success%'"
+| math "countsuc"
+| progress shape="wheel" label={formatnumber "0"} valueColor={
+filters
+| essql 
+query="SELECT count(*) as counttot FROM \"pbna-asn-*\""
+| math "counttot" 
+| progress shape="wheel" label={formatnumber "0"} valueColor={if {lt countsuc/counttot} then="red" else="yellow"}} 
+  font={font family="'Open Sans', Helvetica, Arial, sans-serif" size=16 align="center" color="#37988d" weight="normal" underline=false italic=false} valueColor={if {lt 745865} then="red" else="blue"} max=3537200 valueWeight=13 barColor="#BBBBBB" barWeight=13
+| render
+
+filters
+| essql 
+  query="SELECT count(*) as countsuc from \"pbna-asn-*\" where  status LIKE 'success%'"
+| math "countsuc"
+| progress shape="wheel" label={formatnumber "0"} valueColor={
+filters
+| essql 
+query="SELECT count(*) as countfal from \"pbna-asn-*\" where  status LIKE 'failure%'"
+| math "countfal" 
+| progress shape="wheel" label={formatnumber "0"} valueColor={
+filters
+| essql 
+query="SELECT count(*) as counttot from \"pbna-asn-*\""
+| math "counttot" 
+| progress shape="wheel" label={formatnumber "0"} valueColor={if {lt 745865} then="red" else="blue"}}}
+  font={font family="'Open Sans', Helvetica, Arial, sans-serif" size=16 align="center" color="#37988d" weight="normal" underline=false italic=false} max=3537200 valueWeight=13 barColor="#BBBBBB" barWeight=13
+| render
+
+filters
+| essql 
+  query="SELECT count(*) as countsuc from \"pbna-asn-*\" where  status LIKE 'success%'"
+| math "countsuc"
+| metric "success"
+| progress shape="wheel" label={formatnumber "0"} valueColor={if {gte total-failure} then="yellow" else="red"}
+filters
+| essql 
+query="SELECT count(*) as countfal from \"pbna-asn-*\" where  status LIKE 'failure%'"
+| math "countfal" 
+| metric "failure"
+| progress shape="wheel" label={formatnumber "0"} 
+filters
+| essql 
+query="SELECT count(*) as counttot from \"pbna-asn-*\""
+| math "counttot" 
+| metric "total"
+| progress shape="wheel" label={formatnumber "0"}
+  font={font size=24 family="'Open Sans', Helvetica, Arial, sans-serif" color="#000000" align="center"} max=4534300
+| render
+
+filters
+| essql 
+  query="SELECT count(*) as countsuc from \"pbna-asn-*\" where  status LIKE 'success%'"
+| math "countsuc"
+| metric "success"
+| progress shape="wheel" label={formatnumber "0"} valueColor={if {gte total-failure} then="yellow" else="red"}
+filters
+| essql 
+query="SELECT count(*) as countfal from \"pbna-asn-*\" where  status LIKE 'failure%'"
+| math "countfal" 
+| metric "failure"
+| progress shape="wheel" label={formatnumber "0"} 
+filters
+| essql 
+query="SELECT count(*) as counttot from \"pbna-asn-*\""
+| math "counttot" 
+| metric "total"
+| progress shape="wheel" label={formatnumber "0"}
+  font={font size=24 family="'Open Sans', Helvetica, Arial, sans-serif" color="#000000" align="center"} max=4534300
+| render
+
+filters
+| essql 
+  query="SELECT count(*) as countsuc from \"pbna-asn-*\" where  status LIKE 'success%'"
+| math "countsuc"
+| progress shape="wheel" label={formatnumber "0"} 
+font={font size=24 family="'Open Sans', Helvetica, Arial, sans-serif" color="#000000" align="center"} max=4534300 valueColor={
+filters
+| essql 
+query="SELECT count(*) as countfal from \"pbna-asn-*\" where  status LIKE 'failure%'"
+| math "countfal" 
+| progress shape="wheel" label={formatnumber "0"} font={font size=24 family="'Open Sans', Helvetica, Arial, sans-serif" color="#000000" align="center"} max=4534300 valueColor={
+filters
+| essql 
+query="SELECT count(*) as counttot from \"pbna-asn-*\""
+| math "counttot" 
+| progress shape="wheel" label={formatnumber "0"} valueColor={if {gte total-failure} then="red" else="blue"}}}
+  font={font size=24 family="'Open Sans', Helvetica, Arial, sans-serif" color="#000000" align="center"} max=4534300
+| render
+
+
+https://discuss.elastic.co/t/apply-conditions-in-css-according-to-column-value-in-kibana-canvas/188020/3
+
+
+****************************************DASH BOARD***************************************************
+Certified Orders:
+SELECT count(*) as counttot from "pbna_ord_certfd"
+
+ASN success:
+SELECT COUNT(*) as count FROM "pbna-asn-*" GROUP BY status
+display - last
+filters
+| essql query="SELECT COUNT(*) as count FROM \"pbna-asn-*\" GROUP BY status"
+| math "last(count)"
+| progress shape="wheel" label={formatnumber "0"} valueColor={if {gte "first(count)"} then="red" else="yellow"} max=4534248
+  font={font size=24 family="'Open Sans', Helvetica, Arial, sans-serif" color="#000000" align="center"} 
+| render
+
+SELECT count(asn_sgmt_id)*1.0/count(*) as success FROM "pbna-asn-*"
+
+SELECT count(ord_asn_err_desc_txt) as error,COUNT(*) as total,count(asn_sgmt_id) as success FROM "pbna-asn-*"
+
+filters
+| essql query="SELECT count(asn_sgmt_id)*1.0/count(*) as success FROM \"pbna-asn-*\""
+| math "success"
+| progress shape="wheel" label={formatnumber "(0)%"} valueColor={if {gte "error"} then="green" else="yellow"} max=1 
+  font={font family="'Open Sans', Helvetica, Arial, sans-serif" size=24 align="center" color="#FFFFFF" weight="normal" underline=false italic=false}
+| render
+
+ASN failures:
+SELECT COUNT(*) as count FROM "pbna-asn-*" GROUP BY status
+display - first
+filters
+| essql query="SELECT COUNT(*) as count FROM \"pbna-asn-*\" GROUP BY status"
+| math "first(count)"
+| progress shape="wheel" label={formatnumber "0"} 
+  font={font family="'Open Sans', Helvetica, Arial, sans-serif" size=24 align="center" color="#ca5f35" weight="normal" underline=false italic=false} max=4534300 valueColor={if {gte "last(count)"} then="red" else="#F93308"} valueWeight=13 barColor="#BBBBBB" barWeight=13
+| render
+
+SELECT count(ord_asn_err_desc_txt) as error,COUNT(*) as total,count(asn_sgmt_id) as success FROM "pbna-asn-*"
+SELECT count(ord_asn_err_desc_txt) as error FROM "pbna-asn-*"
+filters
+| essql 
+  query="SELECT count(ord_asn_err_desc_txt)*1.0/COUNT(*) as error FROM \"pbna-asn-*\""
+| math "error"
+| progress shape="wheel" label={formatnumber "(0)%"} valueColor={if {gte "last(count)"} then="red" else="#F93308"} max=1 
+  font={font family="'Open Sans', Helvetica, Arial, sans-serif" size=24 align="center" color="#FFFFFF" weight="normal" underline=false italic=false} valueWeight=13 barColor="#BBBBBB" barWeight=13
+| render
+
+Total certfd oreders:
+
+SELECT count(*) as counttot from "pbna_ord_certfd"
+
+
+ECI success orders:
+pbna_cust_inv_stg.conf changed to pbna_ord_certfd_s
+
+SELECT count(*) as countsuc from "pbna_ord_certfd*" GROUP BY status
+
+ECI invoice amount : 
+pbna_cust_inv_stg - index
+cust_inv_net_amt
+
+SELECT AVG(cust_inv_net_amt)  as avg_inv FROM "pbna_cust_inv_stg"
+
+filters
+| essql query="SELECT AVG(cust_inv_net_amt)  as avg_inv FROM \"pbna_cust_inv_stg\""
+| math "avg_inv"
+| formatnumber format="($ 0.00 a)"
+| metric "" 
+  metricFont={font family="'Open Sans', Helvetica, Arial, sans-serif" size=18 align="center" color="#000000" weight="bold" underline=false italic=false} 
+  labelFont={font size=14 family="'Open Sans', Helvetica, Arial, sans-serif" color="#000000" align="center"}
+| render
+
+ECI Response Time:
+pbna_eci_resptime --> index
+resptime --> column	
+
+SELECT AVG(resptime) as avg_resp FROM "pbna_eci_resptime"
+
+filters
+| essql query="SELECT AVG(resptime) as avg_resp FROM \"pbna_eci_resptime\""
+| math "avg_resp"
+| formatnumber format="('00:00:00')"
+| metric "" 
+  metricFont={font family="'Open Sans', Helvetica, Arial, sans-serif" size=18 align="center" color="#000000" weight="bold" underline=false italic=false} 
+  labelFont={font size=14 family="'Open Sans', Helvetica, Arial, sans-serif" color="#000000" align="center"}
+| render
+
+ECI failures:
+pbna_ord_certfd - pbna_ord_certfd_s  --> failures
+SELECT COUNT(*) as err FROM "pbna_ord_certfd*" where cust_inv_proc_stat_cde LIKE 'UAV%' AND nex_stat_cde LIKE '000%'
+
+
+Total ASN oreders:
+SELECT count(ord_id) as counttot from "pbna-asn-*"
+
+ASN success:
+SELECT count(ord_id) as counttot from "pbna-asn-*"
+
+ASN failures:
+SELECT count(ord_id) as err FROM "pbna-asn-*" where status LIKE 'failure%'
+
+LOGS : 
+
+/var/opt/pepsi/eci/OFH1/logs/eci_app.log
+/var/opt/pepsi/eci/OFH2/logs/eci_app.log 
+/var/opt/pepsi/eci/OFH4/logs/eci_app.log 
+/var/opt/pepsi/eci/OFH5/logs/eci_app.log
+/var/opt/pepsi/eci/SS03/logs/eci_app.log
+/var/opt/autosys/logs/feci_starteci_ofh4.err
+/var/opt/autosys/logs/feci_starteci_ofh5.err
+/var/opt/autosys/logs/feci_starteci_ss03.err
+/var/opt/autosys/logs/feci_starteci_ofh2.err
+/var/opt/autosys/logs/feci_starteci_ofh1.err
+/var/opt/autosys/logs/feci_starteci_ofh4.out
+/var/opt/autosys/logs/feci_starteci_ofh5.out
+/var/opt/autosys/logs/feci_starteci_ss03.out
+/var/opt/autosys/logs/feci_starteci_ofh2.out
+/var/opt/autosys/logs/feci_starteci_ofh1.out
+/var/opt/autosys/logs/feci_stopeci_ofh4.err
+/var/opt/autosys/logs/feci_stopeci_ofh5.err
+/var/opt/autosys/logs/feci_stopeci_ss03.err
+/var/opt/autosys/logs/feci_stopeci_ofh2.err
+/var/opt/autosys/logs/feci_stopeci_ofh1.err
+
+
+https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-syntax-select.html
+https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-like-rlike-operators.html
+
+
+SELECT a.id --, other columns 
+  FROM dbo.nov_2012 AS a
+  WHERE NOT EXISTS (SELECT 1 FROM dbo.mar_2013 WHERE id = a.id);
+
+INDICES : 
+
+pbna_ord_certfd_fofh1
+pbna_ord_certfd_fofh2
+pbna_ord_certfd_fofh_fss03
+pbna_ord_certfd_fofh4
+pbna_ord_certfd_fofh5
+
+pbna_ord_certfd 
+
+
+pbna_ord_fofh1
+pbna_ord_fofh2
+pbna_ord_fofh_fss03
+pbna_ord_fofh4
+pbna_ord_fofh5
+
+pbna_cust_inv_stg_fofh1
+pbna_cust_inv_stg_fofh2
+pbna_cust_inv_stg_fofh_fss03
+pbna_cust_inv_stg_fofh4
+pbna_cust_inv_stg_fofh5
+
+	
+
+pbna_asn_trsmsn_rec
+pbna_cust_asn_prtcpnt
+pbna_asn_trsmsn_file
+pbna_ord_asn_err
+
+connect-pbna-json
+connect-pbna-topic
+pbna-invoice-test
+
+
+connect-pbna-json
+connect-pbna-topic
+pbna-invoice-test
+
+
+pbna_cust_inv_stg*
+pbna_ord_certfd*
+pbna*
+pbna_ord_f*
+pbna_cust_inv_stg_fofh2
+pbna_ord_certfd_fofh2
+49,886  17,473 
+pbna1*
+pbna-invoice-test
+
+QUERIES : 
+
+total orders query : 
+
+SELECT "ord_cert_dtm" FROM "pbna_f_ord_certfd"
+
+SELECT count(*) as count FROM "pbna_f_ord_certfd" progress bar count
+SELECT count(*) as count FROM "pbna_ord_certfd"
+
+SELECT count(nex_stat_cde) as ordCount FROM pbna_ord_certfd_fofh2
+
+*******************************
+SELECT
+    nex_stat_cde,
+    COUNT(nex_stat_cde) AS count
+FROM
+    pbna_ord_certfd_fofh2
+GROUP BY
+    nex_stat_cde
+	
+	{{#each rows}}
+- {{nex_stat_cde}} -- {{count}}
+
+{{/each}}
+
+**************************************
+total order count in markdown
+
+{{#each rows}}
+{{ordCount}}
+{{/each}}
+
+SELECT count(nex_stat_cde) as ordCount FROM pbna_ord_certfd_fofh2
+**********************************************
+
+errors in each region
+
+SELECT count(nex_stat_cde) as error FROM pbna_ord_certfd_fofh2 WHERE nex_stat_cde LIKE '808%'
+
+{{#each rows}}
+{{error}}
+{{/each}}
+
+********************************************************
+for index-index we need to do from jdbc query and then create index
+
+******************************************************
+
+
+
+SHOW TABLES "*,-l*"
+
+
+
+SELECT region_name as region_name FROM pbna_ord_certfd GROUP BY region_name  - drop down
+
+SELECT region_name as name,count(region_name) as name_count FROM "pbna_ord_certfd" WHERE nex_stat_cde LIKE '808%'GROUP BY region_name  - horizontal bar
+
+
+SELECT id, COUNT(id) FROM table1 GROUP BY id HAVING COUNT(id)>1
+
+SELECT ord_id,COUNT(ord_id) FROM pbna_asn_trsmsn_file GROUP BY ord_id HAVING COUNT(ord_id)>1 
+
+SELECT ord_id
+FROM pbna_ord_certfd F
+LEFT JOIN pbna_asn_trsmsn_file S
+ON F.ID =S.ID
+
+filters
+| essql query="SELECT count(*) as count_suc from \"pbna-asn-suc\""
+| math "count_suc"
+| progress shape="wheel" label={formatnumber "0"} 
+  font={font family="'Open Sans', Helvetica, Arial, sans-serif" size=16 align="center" color="#37988d" weight="normal" underline=false italic=false} valueColor={if {lt 745865} then="red" else="blue"} max=3537200 valueWeight=13 barColor="#BBBBBB" barWeight=13
+| render
+
+JAR :
+
+ECI :
+
+source\com\pbg\messenger\business\notification\
+
+ECGResponseProcessor :
+getEventData - return getJmsMessage()<orderid>.txt
+finishEvent - return event status with codes
+
+ECIProcessor :
+getEventData - MessageProcessorDAO.orderMapped() - return ordMapped T/F - 
+              IF F and tr type eci then Orders are not mapped successfully with customer invoice for order ELSE - No data for order were mapped to customer invoice in ECI order mapped process
+			  return empty list
+			  call MessageProcessorDAO.custInvStgMap()
+handleException - check ecgJmsNexMaxRetry(from eci.prp) retry times to send msg sent mail with JMS Failed. ASN for order ID and email_to(from eci.prp) with codeEVENT_STATUS_NEX_EMAIL(EventStatus)
+finishEvent - Success flag for order is  
+
+NEXProcessor:
+getEventData - MessageProcessorDAO.isInvoiceAvailableInvoice() - return ordMapped T/F -  
+               IF F and tr type NEX then Invoice not available for order  
+			   call MessageProcessorDAO.createNEX()
+			   add .txt 
+			   return asn str
+handleException - same as above
+finishEvent - same as above 
+
+SmallFormatProcess:
+
+getEventData - MessageProcessorDAO.smallFormatordstg() - return ordMapped T/F -  
+               IF F and tr type NEX then Small Format Orders are not mapped successfully with customer invoice for order 
+			   call MessageProcessorDAO.custInvStgMap() 
+			   if F then No data for order " + event.getEvent_id() + "were mapped to customer invoice in ECI order mapped process.
+handleException - same as above
+finishEvent - same as above
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MessengerMain --> ConfigManager --> eci.properties,nex.config
+
+
+FIT :
+DBs : 5(FOFH1,FOFH2,FSS03,FOFH4,FOFH5)
+hostname : fofh1db.pepsi.pvt,fofh2db.pepsi.pvt,fss03db.pepsi.pvt,fofh4db.pepsi.pvt,fofh5db.pepsi.pvt
+port : 50837,50841,50833,50032,50937
+user : read_hhc
+password : hood128
+
+PROD : 
+DBs : 5(POFH1,POFH2,PSS03,POFH4,POFH5)
+hostname : pofh1db.pepsi.pvt,pofh2db.pepsi.pvt,pss03db.pepsi.pvt,pofh4db.pepsi.pvt,pofh5db.pepsi.pvt
+port : 50725,50729,50833,50691,50960
+user : read_hhc
+password : hood128
+
+TABLE DETAILS :
+
+common..asn_trsmsn_file  (ASN table)
+common..asn_trsmsn_rec  (Raw data file)
+COMMON..CUST_ASN_PRTCPNT (Participant table)
+common..ord_asn_err  (Error Table)
+
+ASN_TRSMSN_FILE
+
+
+172.*;*.ultimatix.*;*INM*.TCS.COM;*IND*.TCS.COM;*INC*.TCS.COM;*INH*.TCS.COM;*INB*.TCS.COM;*INK*.tcs.com;buzz.tcs.com;voip.tcs.com;*.eurja*;*supportce;ntral.tcs.com;news.tcs.com;sg*.tcs.com;us*.tcs.com;uk*.tcs.com;*recruitment*;*careers*;157.*;sps*;ftc*;tw.tcs.com;edge.tcs.com;inchnveloa.tcs.com;*.i;ndia.tcs.com;ideastorm.tcs.com;securityportal.tcs.com;isisd.tcs.com;meeting.tcs.com;*video.tcs.com;mscommunityportal.tcs.com;search.tdcustagweb.tcs.c;om;Web2labs.tcs.com;academia.tcs.com;photo.tcs.com;*tcs-;helpdesk*;ilpcms.tcs.com;campustaprocess.tcs.com;*tcsbas.tcsbpo*;globalmeet.tcs.com;bpoonline.tcs.com;*hrservicesonline.com*;*customersurvey.tcs.com*;mstream*;vstream.tcs.com;tcsmapagile.tcs.com;custportaluat.tcs.*;nextstep.tcs.com;knowfs.tcs.com;conference.tcs.com;*finterestgroup.com;customerport;al.tcs.*;*alumniportal.tcs.com*;outlook.tcs.com;mail.tcs.com;Autodiscover.tcs.com;inmumexc01.tcs.com;inmumexc02.tcs.com;inmumzm01.tcs.com;inmumzm02.t;cs.com;ecd.tcs.com;cas.tcs.com;gbamsuat.tcs.com;gbams.tcs.com;vmsprocurement.tcs.com;vms.tcs.com;boduat.tcs.com;*.BPO.TCS.COM*;i-;asuhplabvm18.tcsasuhplab.com;avchat.tcs.com;meetingav.tcs.com;conference1.tcs.com;colosseum.tcs.com;lifeline.tcs.com;fit4life.tcs.com;tqas.tcs.com;ir;m.tcs.com;irmdr.tcs.com;dominoconnect.tcs.com;isprojects.tcs.com;secureerase.tcs.com;webmail.tcs.com;vlabsmumbai.tcs.com;is-;connect.tcs.com;tob.boadapp.tcs.com;bodapp.tcs.com;bod.tcs.com;grodev.tcs.com;IS-;Backup.tcs.com;*.itfrontier.co.jp;vlabschennai.tcs.com;mchat.tcs.com;10.*;eventsdev.tcs.com;pim.tcs.;com;*.tcsion.com;*.digialm.com;*.workspace.tcs.com;*appvol.india.tcs.com;stadvance.tcs.com;eventsdemo.tcs.com;events.tcs.com;bmsportal.tcs.com;meghaa;s-access.tcs.com;eventsuat.tcs.com;*.tcsionhub.in;*.tcsionhub.uk;tgim*;163.122.229.*;*cloudvistara*;securepam.tcs.com;*.tcsgsp.in;*.Fresco.me;excellenc;e.tcs.com;cto-;cybersecurityresearch.tcs.com*;agilespace.tcs.com;occasions.tcs.com;*hcp*;weave.tcs.com;*.iur.ls;client.threatpulse.net;*.fs.tcs.com;otpselfservice.t;cs.com;*.mdm.tcs.com
+
+

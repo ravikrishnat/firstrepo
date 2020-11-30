@@ -1,0 +1,135 @@
+{
+
+  "trigger": {
+
+    "schedule": {
+
+      "weekly": [
+
+        {
+
+          "on": [
+
+            "SUN",
+
+            "MON",
+
+            "TUE",
+
+            "WED",
+
+            "THU",
+
+            "FRI",
+
+            "SAT"
+
+          ],
+
+          "at": [
+
+            "5:00"
+
+          ]
+
+        }
+
+      ]
+
+    }
+
+  },
+
+  "input": {
+
+    "none": {}
+
+  },
+
+  "condition": {
+
+    "always": {}
+
+  },
+
+  "actions": {
+
+    "email_admin": {
+
+      "email": {
+
+        "account": "exchange_account",
+
+        "profile": "standard",
+
+        "attachments": {
+
+          "pbna-sales-order-report_pie.pdf": {
+
+            "reporting": {
+
+              "url": "https://1d27f6a779ee4feb9bcc4132fbafcd42.ece-eip.scus.dev.azure.intra.pepsico.com:9243/api/reporting/generate/printablePdf?jobParams=(browserTimezone:Asia%2FCalcutta,layout:(dimensions:(height:1380,width:1169),id:preserve_layout),objectType:dashboard,relativeUrls:!(%27%2Fapp%2Fkibana%23%2Fdashboard%2Fc3aedd30-7ffa-11ea-861c-6395eb1f5ef7%3F_g%3D(refreshInterval:(pause:!!t,value:0),time:(from:now-24h,mode:quick,to:now))%26_a%3D(description:!%27!%27,filters:!!(),fullScreenMode:!!f,options:(darkTheme:!!f,hidePanelTitles:!!f,useMargins:!!t),panels:!!((embeddableConfig:(),gridData:(h:24,i:!%271!%27,w:48,x:0,y:0),id:!%2796a16cd0-7fd3-11ea-9dd7-d5ced7eb8ca4!%27,panelIndex:!%271!%27,type:visualization,version:!%276.8.3!%27),(embeddableConfig:(),gridData:(h:25,i:!%272!%27,w:48,x:0,y:24),id:cbb8c690-7ff9-11ea-861c-6395eb1f5ef7,panelIndex:!%272!%27,type:visualization,version:!%276.8.3!%27)),query:(language:lucene,query:!%27!%27),timeRestore:!!f,title:!%27PBNA%2BSales%2Breport_Pie!%27,viewMode:view)%27),title:%27PBNA%20Sales%20report_Pie%27)",
+
+              "retries": 2,
+
+              "interval": "1m",
+
+              "auth": {
+
+                "basic": {
+
+                  "username": "elastic",
+
+                  "password": "::es_redacted::"
+
+                }
+
+              }
+
+            }
+
+          },
+
+          "pbna-sales-order-report_bar.pdf": {
+
+            "reporting": {
+
+              "url": "https://1d27f6a779ee4feb9bcc4132fbafcd42.ece-eip.scus.dev.azure.intra.pepsico.com:9243/api/reporting/generate/printablePdf?jobParams=(browserTimezone:Asia%2FCalcutta,layout:(dimensions:(height:596,width:1169),id:preserve_layout),objectType:dashboard,relativeUrls:!(%27%2Fapp%2Fkibana%23%2Fdashboard%2Faeea6660-84ac-11ea-ae5b-893865c0d623%3F_g%3D(refreshInterval:(pause:!!t,value:0),time:(from:now-32d,mode:relative,to:now))%26_a%3D(description:!%27!%27,filters:!!(),fullScreenMode:!!f,options:(darkTheme:!!f,hidePanelTitles:!!f,useMargins:!!t),panels:!!((embeddableConfig:(vis:(colors:(!%27Number%2Bof%2BOrders!%27:%2523447EBC))),gridData:(h:21,i:!%271!%27,w:48,x:0,y:0),id:!%27691273f0-7ffa-11ea-861c-6395eb1f5ef7!%27,panelIndex:!%271!%27,type:visualization,version:!%276.8.3!%27)),query:(language:lucene,query:!%27!%27),timeRestore:!!f,title:!%27PBNA%2BSales%2Breport_Bar!%27,viewMode:view)%27),title:%27PBNA%20Sales%20report_Bar%27)",
+
+              "retries": 2,
+
+              "interval": "1m",
+
+              "auth": {
+
+                "basic": {
+
+                  "username": "elastic",
+
+                  "password": "::es_redacted::"
+
+                }
+
+              }
+
+            }
+
+          }
+
+        },
+
+        "to": [
+
+          "Upendranath.Yellala.Contractor@pepsico.com"
+
+        ],
+
+        "subject": "PBNA Sales order report"
+
+      }
+
+    }
+
+  }
+
+}

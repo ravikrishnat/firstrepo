@@ -1,0 +1,79 @@
+######################
+
+#for log file configuration
+
+vi /etc/rsyslog.d/haproxy.conf	
+
+$FileOwner kibana
+$FileGroup kibana
+$FileCreateMode 0644
+$Umask 0022
+local2.=info     /opt/kibana/haproxy-2.1.2/var/log/haproxy-access.log    #For Access Log
+local2.notice   /opt/kibana/haproxy-2.1.2/var/log/haproxy-info.log      #For Service Info - Backend, loadbalancer
+
+
+##################
+
+systemctl restart rsyslog
+
+systemctl restart haproxy.service
+
+#########################
+#for log rotation
+
+vi /etc/logrotate.d/haproxy
+
+/opt/kibana/haproxy-2.1.2/var/log/*.log {
+    missingok
+    daily
+    size 50K
+    rotate 5
+    notifempty
+    create 0644 kibana kibana
+    su kibana kibana
+    copytruncate 
+}
+
+###########################
+----------------------------------------------------------------------------
+Server : peplap04426.corp.pep.pvt
+
+Login as : kibana
+
+Password : Rose1472    
+/opt/kibana/haproxy-2.1.2/var/log
+
+
+/opt/haproxy/haproxy-2.1.2
+
+https://blog.codeship.com/performance-tuning-haproxy/
+https://www.howtoforge.com/tutorial/how-to-setup-haproxy-as-load-balancer-for-nginx-on-centos-7/
+
+
+
+
+######################3
+Uncomment Line 15,16 from 
+vi /etc/rsyslog.conf
+
+$ModLoad imudp
+$UDPServerRun 514
+
+
+-------
+
+systemctl restart rsyslog
+
+systemctl restart haproxy.service
+
+
+Dear Asish/Asna,
+
+In order to enable logging in HAProxy, a few configurations has to be done in /etc/rsyslog.conf file. I am attaching a file with required changes.
+
+Requesting you to raise a SR for the same.
+
+
+@ Sai ,
+
+Requesting you to share the process to get ServiceNow access to our team.

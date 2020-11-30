@@ -1,0 +1,122 @@
+##################LINKS
+https://www.techrepublic.com/article/how-to-install-a-kubernetes-cluster-on-centos-7/
+
+https://myopswork.com/how-to-install-kubernetes-k8-in-rhel-or-centos-in-just-7-steps-2b78331174a5 : architecture of kubernetes
+
+https://myopswork.com/how-to-install-kubernetes-k8-in-rhel-or-centos-in-just-7-steps-2b78331174a5 : installation
+
+https://www.techrepublic.com/article/how-to-install-a-kubernetes-cluster-on-centos-7/ : kubernetes installation step by step
+
+https://www.techrepublic.com/article/how-to-deploy-your-first-pod-on-a-centos-kubernetes-cluster/ : deploy nginx pod in kubernetes
+
+https://www.linuxtechi.com/install-kubernetes-1-7-centos7-rhel7/ : installation kubernetes in RHEL 7
+
+
+https://www.howtoforge.com/tutorial/centos-kubernetes-docker-cluster/ *********
+
+
+######################Installation
+
+
+
+kubeadm init --apiserver-advertise-address=10.51.184.28 --pod-network-cidr=10.244.0.0/16
+===============
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 10.51.184.28:6443 --token tyt8tf.ujvr29kk53eqtkx7 \
+    --discovery-token-ca-cert-hash sha256:e6e00ca39b584ffa128e87a72b0f1712cc965d275bdc5363e8b4267ec4fa6605 
+
+
+
+=================
+
+Flannel
+
+https://github.com/containernetworking/plugins.git
+
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+podsecuritypolicy.policy/psp.flannel.unprivileged created
+clusterrole.rbac.authorization.k8s.io/flannel created
+clusterrolebinding.rbac.authorization.k8s.io/flannel created
+serviceaccount/flannel created
+configmap/kube-flannel-cfg created
+daemonset.apps/kube-flannel-ds-amd64 created
+daemonset.apps/kube-flannel-ds-arm64 created
+daemonset.apps/kube-flannel-ds-arm created
+daemonset.apps/kube-flannel-ds-ppc64le created
+daemonset.apps/kube-flannel-ds-s390x created
+
+
+
+
+
+
+
+
+
+
+###################KUBELET Service 
+[Service]
+Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf"
+Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml"
+# This is a file that "kubeadm init" and "kubeadm join" generates at runtime, populating the KUBELET_KUBEADM_ARGS variable dynamically
+EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env
+# This is a file that the user can use for overrides of the kubelet args as a last resort. Preferably, the user should use
+# the .NodeRegistration.KubeletExtraArgs object in the configuration files instead. KUBELET_EXTRA_ARGS should be sourced from this file.
+EnvironmentFile=-/etc/sysconfig/kubelet
+ExecStart=
+ExecStart=/usr/bin/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELET_KUBEADM_ARGS $KUBELET_EXTRA_ARGS
+
+##########Kubectl
+
+kubectl get node
+kubectl get svc --namespace=kube-system
+kubectl get ep kube-dns --namespace=kube-system
+kubectl get svc --all-namespaces
+
+################################################
+
+
+
+###################Uninstallation of Kubernetes(https://medium.com/@meysam1369/kubernetes-completely-uninstall-3f2a83dd985d)
+kubectl drain 01hw748940 --delete-local-data --force --ignore-daemonsets
+kubectl delete node 01hw748940
+kubeadm reset 
+=======
+The reset process does not clean CNI configuration. To do so, you must remove /etc/cni/net.d
+
+The reset process does not reset or clean up iptables rules or IPVS tables.
+If you wish to reset iptables, you must do so manually by using the "iptables" command.
+
+If your cluster was setup to utilize IPVS, run ipvsadm --clear (or similar)
+to reset your system's IPVS tables.
+
+The reset process does not clean your kubeconfig files and you must remove them manually.
+Please, check the contents of the $HOME/.kube/config file.
+
+rm -rf /var/lib/cni/
+rm -rf /var/lib/kubelet/*
+rm -rf /run/flannel
+rm -rf /etc/cni/
+==========
+
+sudo yum remove kubeadm kubectl kubelet kubernetes-cni kube*
+
+sudo yum remove docker-ce
+
+
+
+
+
+
+
