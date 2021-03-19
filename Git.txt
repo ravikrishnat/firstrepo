@@ -1,0 +1,93 @@
+Branches : Its like copy of whole folder..you can make changes in new folder
+
+$ git config --global user.name "takkallapalli-ravikrishna-tcs"
+$ git config --global user.email "takkallapalli.r@gmail.com"
+
+git branch <branchname>
+Creating new branch: git checkout -b <branch-name>
+Pushing branch from local to remote repo: git push origin <branch-name>
+Renaming branch:
+Renaming local branch: git branch -m old-name new-name
+Renaming remote branch: git push origin :old-name new-name
+Deleting branch:
+Deleting local branch: git branch -d <branch-name>
+Deleting remote branch: git push origin -d <branch-name>
+
+Cheat Sheet
+git branch -a: Lists all the branches
+git branch -d <branch-name>: Deletes the branch in local repo
+git checkout -b: Creates a branch and switches to it
+git checkout <branch-name>: Switches to the provided branch
+
+Webhooks:  will be triggered whenever a Push or a Pull Request happen at this repository, which will send a signal to a Jenkins instance and trigger a CI pipeline:
+ Payload URL will be something setup on the Jenkins 
+ 
+  GitHub Desktop : windows
+   Git Bash  :
+   
+   ff06668eed086fde3a6d9d3c29e258b358ea0054  : Github token
+   https://github.com/ravikrishnat/firstrepo.git
+   takkallapalli-ravikrishna-tcs  
+ravikrishnat
+takkallapalli.r@gmail.com
+Krish1004
+
+git add file
+git commit -m "message"
+git push origin master
+
+ git clone https://github.com/schacon/ticgit
+ cd ticgit
+git remote -v
+git remote add pb https://github.com/paulboone/ticgit   -- Adding Remote Repositories
+git remote show origin
+
+https://devconnected.com/how-to-push-git-branch-to-remote/
+$ git pull
+
+$ git checkout my-feature
+git add file
+git commit -m "message"
+
+$ git merge origin/feature
+
+$ git push origin my-feature:feature
+
+####To merge local branch with remote branch ###
+first pull remote branch and make sure  a pushed branch tip is not behind its remote
+$ git pull origin remote_branch
+# add a commit msg
+$ git push origin localbranch:remote_branch
+$ git push origin devland:Dev
+Enumerating objects: 1, done.
+Counting objects: 100% (1/1), done.
+Writing objects: 100% (1/1), 302 bytes | 151.00 KiB/s, done.
+Total 1 (delta 0), reused 0 (delta 0), pack-reused 0
+To https://github.com/procter-gamble/pim.git
+   eac1949..a77aa52  devland -> Dev
+
+git pull origin master
+git commit -m "commit msg"
+git push origin master
+
+
+	 checkout to local branch
+	 pull/fetch  changes from remote landing branch 
+	 git add .
+	 commit files to local branch
+	 push changes to remote target branch
+
+node {
+    def scmVars = checkout([
+               $class : 'GitSCM',
+               branches : [[name: '*/master']],
+               doGenerateSubmoduleConfigurations: false,
+               extensions : [/*[$class: 'CleanBeforeCheckout']*/],
+               submoduleCfg : [],
+               userRemoteConfigs: [[credentialsId: 'local-bb', url: 'http://admin@localhost:7990/bitbucket/scm/project_1/rep_1.git']]
+           ])
+   stage('test') {
+       println 'some text'
+       println scmVars.GIT_BRANCH
+   }
+}
